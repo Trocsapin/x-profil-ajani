@@ -23,7 +23,27 @@ header {visibility: hidden;}
 st.title("👁️ X Profil Analiz Ajani")
 st.markdown("X (Twitter) profillerini yapay zeka ile derinlemesine inceleyin.")
 
-# --- API ANAHTARI ---
+# --- KULLANIM ÖZETİ VE REHBER (GÜNCELLENDİ) ---
+with st.expander("👋 Bu Araç Nedir ve Nasıl Kullanılır? (İlk Kez Gelenler Okusun)", expanded=True):
+    st.markdown("""
+    **Hoş Geldiniz!** Bu araç, X hesabınızı büyütmeniz veya başka profillerin karakter analizini yapmanız için tasarlanmış **Yapay Zeka destekli bir dijital danışmandır.**
+    
+    **Seçenek 1: Hızlı Analiz (Ekran Görüntüsü ile)**
+    Profilinizin veya tweetlerinizin ekran görüntüsünü alıp yükleyin. Yapay zeka tasarımı ve içeriği anında inceler.
+    
+    **Seçenek 2: Derinlemesine Analiz (X Arşivi ile)**
+    Tüm geçmişinizi analiz ettirmek isterseniz kendi X veri arşivinizi yükleyebilirsiniz.
+    * **X Arşivi Sisteme Nasıl Yüklenir?**
+      1. X'ten verilerinizi indirin (Size e-posta ile bir `.zip` dosyası gelecek).
+      2. Bu `.zip` dosyasını bilgisayarınızda normal bir klasöre çıkartın.
+      3. Çıkardığınız klasörün içindeki **`data`** klasörüne girin.
+      4. Oradaki **`tweets.js`** adlı dosyayı bulup aşağıdaki "X Arşivi" kutusuna sürükleyin. (İşte bu kadar!)
+    
+    *(🔒 Gizlilik Garantisi: Yüklediğiniz hiçbir görsel veya arşiv dosyası sistemde kaydedilmez. Analiz bittiği an tamamen silinir.)*
+    """)
+st.markdown("---")
+
+# --- API ANAHTARI (GÜVENLİ KASA BAĞLANTISI) ---
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
 # --- 2. SEKME (TAB) YAPISI ---
@@ -43,7 +63,8 @@ with sekme1:
     with col2:
         manuel_tweetler_1 = st.text_area("📝 Metin Yapıştır", height=100, key="metin_1")
     with col3:
-        arsiv_dosyasi_1 = st.file_uploader("📁 X Arşivi", type=["csv", "txt", "json"], key="arsiv_1")
+        # ARTIK .js DOSYALARINI DA DOĞRUDAN KABUL EDİYOR
+        arsiv_dosyasi_1 = st.file_uploader("📁 X Arşivi (tweets.js)", type=["csv", "txt", "json", "js"], key="arsiv_1")
 
     if st.button("🚀 Büyüme Analizini Başlat", key="btn_1"):
         if not kullanici_1:
@@ -51,7 +72,7 @@ with sekme1:
         elif not yuklenen_dosyalar_1 and not manuel_tweetler_1 and not arsiv_dosyasi_1:
             st.warning("Analiz için en az bir veri yüklemelisiniz.")
         else:
-            with st.spinner("Büyüme reçeteniz yazılıyor..."):
+            with st.spinner("Büyüme reçeteniz yazılıyor... (Arşiv yüklediyseniz 20-30 saniye sürebilir)"):
                 try:
                     client = genai.Client(api_key=GEMINI_API_KEY)
                     icerikler = []
