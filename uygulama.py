@@ -126,4 +126,39 @@ with sekme2:
     if st.button("🕵️‍♂️ Karakter Analizini Başlat", key="btn_2"):
         if not kullanici_2:
             st.warning("Lütfen incelenecek kişinin kullanıcı adını girin.")
-        elif not yuklenen
+        elif not yuklenen_dosyalar_2 and not manuel_tweetler_2:
+            st.warning("Analiz için kişiye ait en az bir ekran görüntüsü veya metin girmelisiniz.")
+        else:
+            with st.spinner("Yapay zeka profilin psikolojik ve profesyonel röntgenini çekiyor..."):
+                try:
+                    client = genai.Client(api_key=GEMINI_API_KEY)
+                    icerikler_2 = []
+                    
+                    prompt_2 = f"Görev: @{kullanici_2} adlı X kullanıcısının psikolojik, profesyonel ve sosyal eğilimlerini analiz et. Sen uzman bir İnsan Kaynakları profesyoneli ve davranış bilimcisisin.\n\n"
+                    if manuel_tweetler_2: prompt_2 += f"İncelenecek Tweetler:\n{manuel_tweetler_2}\n\n"
+                    
+                    prompt_2 += """
+                    Lütfen şu başlıklarda tarafsız, net ve içgörü dolu bir rapor sun:
+                    
+                    🧠 1. Kişilik Çıkarımı ve İlgi Alanları
+                    - Bu kişi nasıl bir karaktere sahip? (Örn: Agresif, mizahi, analitik, tartışmacı, sakin)
+                    - En çok hangi konulara ilgi duyuyor?
+                    
+                    🗣️ 2. İletişim Tonu ve Üslup
+                    - İnsanlarla iletişim kurarken nasıl bir dil kullanıyor?
+                    
+                    ⚠️ 3. Profesyonel Değerlendirme & Kırmızı Bayraklar (Red Flags)
+                    - Bir işveren olsanız, bu profili nasıl değerlendirirsiniz?
+                    - Ekip çalışmasına uygun mu, yoksa toksik/kutuplaştırıcı eğilimleri var mı?
+                    """
+                    icerikler_2.append(prompt_2)
+                    
+                    if yuklenen_dosyalar_2:
+                        for dosya in yuklenen_dosyalar_2: icerikler_2.append(Image.open(dosya))
+                            
+                    res_2 = client.models.generate_content(model='gemini-2.5-flash', contents=icerikler_2)
+                    st.success("Karakter Analizi Tamamlandı!")
+                    st.markdown("### 🕵️‍♂️ Kişilik ve Eğilim Raporu")
+                    st.write(res_2.text)
+                except Exception as e:
+                    st.error(f"Hata: {e}")
